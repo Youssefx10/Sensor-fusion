@@ -29,3 +29,6 @@ Install dependencies using pip:
 
 ```bash
 pip install -r requirements.txt
+'(opencv-python
+numpy
+pyserial)'
