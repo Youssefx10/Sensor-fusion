@@ -47,7 +47,7 @@ def visualize_setup(self, img_size=(640, 480)):
         # Plot field of view of ultrasonic sensor 
         # Create some sample points at different angles
         angles_h = np.linspace(-30, 30, 10)  # Horizontal field of view
-        max_distance = 5.0  # Maximum sensing distance
+        max_distance = 3.0  # Maximum sensing distance
         
         for angle_h in angles_h:
                 point = self.ultrasonic_servo_to_xyz(max_distance, angle_h)

@@ -3,6 +3,7 @@ import cv2
 import matplotlib.pyplot as plt
 from mpl_toolkits.mplot3d import Axes3D
 import math
+from ultralytics import YOLO
 
 class SensorFusionSystem:
     def __init__(self, camera_matrix, dist_coeffs, rvec, tvec):
@@ -54,9 +55,53 @@ class SensorFusionSystem:
         # Extract and return pixel coordinates
         return tuple(map(int, point_2d[0][0]))
     
+    
+    def load_yolo_model(self):
+            self.yolo_model = YOLO('yolov8n.pt')
+
+    def detect_objects(self, frame):
+        """
+        Detect objects in the frame using YOLOv8.
+        Returns list of detected objects with their bounding boxes and class.
+        """
+        if self.yolo_model is None:
+            return []
         
+        # Run YOLOv8 detection with confidence threshold
+        results = self.yolo_model.predict(frame, conf=0.4, iou=0.45)
+        
+        detected_objects = []
+        if results and len(results) > 0:
+            # Process the first result (current frame)
+            result = results[0]
+            
+            # Extract boxes, classes and confidence scores
+            for box in result.boxes:
+                # Get box coordinates (xmin, ymin, xmax, ymax)
+                x1, y1, x2, y2 = map(int, box.xyxy[0].tolist())
+                
+                # Calculate center
+                x_center = (x1 + x2) / 2
+                y_center = (y1 + y2) / 2
+                
+                # Get confidence score
+                conf = float(box.conf[0])
+                
+                # Get class name
+                cls_id = int(box.cls[0])
+                cls_name = result.names[cls_id]
+                
+                obj = {
+                    'class': cls_name,
+                    'confidence': conf,
+                    'bbox': (x1, y1, x2, y2),
+                    'center': (int(x_center), int(y_center))
+                }
+                detected_objects.append(obj)
+            
+        return detected_objects
+    
     def run_live_detection(self):
-      
         cap = cv2.VideoCapture(0)
         
         try:
@@ -84,6 +129,7 @@ class SensorFusionSystem:
                 cv2.imshow('Sensor Fusion', frame)
                 if cv2.waitKey(1) & 0xFF == ord('q'):
                     break
+                
         
         finally:
             cap.release()
