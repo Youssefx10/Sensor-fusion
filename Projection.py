@@ -33,7 +33,6 @@ class SensorFusionSystem:
         # sensor data
         self.distance = 0
         self.angle = 0
-        self.last_valid_distance = 0
     
     def read_sensor_data(self):
         
