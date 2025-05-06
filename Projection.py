@@ -128,10 +128,12 @@ class SensorFusionSystem:
 
 
 def main():
-    # Camera calibration parameters 
+
+    # !!!! Modify this with data from calibration !!!!
+
     camera_matrix = np.array([
-        [1000, 0, 320],  # fx, 0, cx
-        [0, 1000, 240],  # 0, fy, cy
+        [1000, 0, 320],  
+        [0, 1000, 240],  
         [0, 0, 1]
     ])
     
